@@ -1,0 +1,23 @@
+name = "juRDA"
+uuid = "8bd302f7-2796-4b88-8584-78c7f77cab70"
+authors = ["y-chu <ychu612@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+ConfigEnv = "01234589-554d-41b7-ae5c-7b6ee2db6796"
+DBInterface = "a10d1c49-ce27-4219-8d33-6db1a4562965"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+RDAClean = "8b35e4f4-5e5a-49d2-8a20-f98d045c36a8"
+RDAIngest = "aba026a6-e005-4398-bcdf-85be4f49656a"
+SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
+[compat]
+julia = "1.8"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
