@@ -6,7 +6,7 @@ using Logging
 
 # Global environment-like object
 Base.@kwdef mutable struct RDAEnv
-    db_path::String = joinpath(@__DIR__, "..", "..") |> normpath
+    db_path::String = joinpath(@__DIR__, "..", "..","RDAIngest.jl/database") |> normpath
     db_name::String = "RDA"
     db_conn::Union{SQLite.DB, Nothing} = nothing
 

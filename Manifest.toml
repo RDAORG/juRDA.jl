@@ -437,13 +437,13 @@ version = "1.3.0"
 
 [[deps.RDAClean]]
 deps = ["CSV", "DBInterface", "DataFrames", "Dates", "RDAIngest", "SQLite", "Statistics"]
-path = "/Users/chu.282/Dropbox/OSU/RDA_private/RDAORG/RDAClean.jl"
+path = "C:/Users/kuo.355/OneDrive - The Ohio State University/10_RDA/RDAClean.jl"
 uuid = "8b35e4f4-5e5a-49d2-8a20-f98d045c36a8"
 version = "0.1.0-DEV"
 
 [[deps.RDAIngest]]
 deps = ["Arrow", "Base64", "CSV", "ConfigEnv", "DBInterface", "DataFrames", "DataStructures", "Dates", "Docx", "FileIO", "JSON3", "ODBC", "SQLite", "XLSX"]
-path = "/Users/chu.282/Dropbox/OSU/RDA_private/RDAORG/RDAIngest.jl"
+path = "C:/Users/kuo.355/OneDrive - The Ohio State University/10_RDA/RDAIngest.jl"
 uuid = "aba026a6-e005-4398-bcdf-85be4f49656a"
 version = "0.1.0-DEV"
 
