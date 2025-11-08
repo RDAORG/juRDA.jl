@@ -6,7 +6,7 @@ using DataFrames
 using Dates
 
 # using Pkg
-Pkg.develop(PackageSpec(path="/Users/chu.282/Dropbox/OSU/RDA_private/RDAORG/juRDA.jl"))
+Pkg.develop(PackageSpec(path="../../juRDA.jl"))
 
 using juRDA
 
@@ -17,9 +17,9 @@ include("../src/env.jl")
 
 db = load_rda()
 
-db = load_rda("/Users/chu.282/Dropbox/OSU/RDA_private/RDAORG/RDAIngest.jl/database/RDA.sqlite")
+db = load_rda("../../RDA/Database/RDA.sqlite")
 
-rda_env.db_path = "/Users/chu.282/Dropbox/OSU/RDA_private/RDAORG/RDAIngest.jl/database/"
+rda_env.db_path = "../../RDA/Database"
 _load_initial_tables()
 db = rda_env.db_conn
 
