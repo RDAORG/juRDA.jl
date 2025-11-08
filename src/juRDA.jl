@@ -1,3 +1,7 @@
+"""
+Main module for `juRDA.jl` -- a user API package for Reference Data Archive (RDA).
+"""
+
 module juRDA
 
 using RDAIngest
@@ -6,15 +10,15 @@ using DBInterface
 using DataFrames
 using Logging
 
-export load_rda, rda_sources, rda_countries, rda_sites, rda_deaths, rda_datasets, rda_data_dict, rda_data, rda_schema, rda_env
+export load_rda, rda_sources, rda_countries, rda_sites, rda_deaths, rda_datasets, rda_data_dict, rda_data, rda_schema, rda_env, rda_table
 
 include("env.jl")
 #__init__()
 
 """
-    load_rda(path::Union{String, Nothing}=nothing)::SQLite.DB
+    load_rda(path=nothing)
 
-Opens and returns a connection to the SQLite database at the given path.
+Opens a connection to the SQLite database at `path`. Use default path if `path` is not specified
 """
 function load_rda(path::Union{String, Nothing}=nothing)::SQLite.DB
     if path === nothing
@@ -27,24 +31,20 @@ function load_rda(path::Union{String, Nothing}=nothing)::SQLite.DB
     return db
 end
 
-
 """
     rda_sources()
 
-Return sources table
+Retrieve sources table as a DataFrame
 """
-
-# Return sources dataframe
 function rda_sources()
     return deepcopy(rda_env.sources)
 end
 
 """
     rda_datasets(; doi=false, repo_id=false, 
-                      source_name::Union{Nothing,String}=nothing, 
-                      source_id::Union{Nothing,Int}=nothing)
+    source_name=nothing, source_id=nothing)
 
-Return available datasets
+Retrieve available datasets. If doi = true and/or repo_id = true, then also return doi of dataset and/or repository id on RDA Data Repository. Optionally filter by `source_name` or `source_id`
 """
 function rda_datasets(; doi=false, repo_id=false, 
                       source_name::Union{Nothing,String}=nothing, 
@@ -97,11 +97,10 @@ end
 
 
 """
-    rda_countries(; source_name::Union{Nothing,String}=nothing, source_id::Union{Nothing,Int}=nothing)
+    rda_countries(; source_name=nothing, source_id=nothing)
 
-Return countries, optionally filter by source_name or source_id
+Return countries, optionally filter by `source_name` or `source_id`
 """
-
 function rda_countries(; source_name::Union{Nothing,String}=nothing, source_id::Union{Nothing,Int}=nothing)
     sources = deepcopy(rda_env.sources)
     countries = unique(select(rda_env.sites, [:country_name, :country_iso3, :source_id]))
@@ -128,14 +127,13 @@ function rda_countries(; source_name::Union{Nothing,String}=nothing, source_id::
 end
  
 """
-    rda_sites(; source_name::Union{Nothing,String}=nothing,
-                     source_id::Union{Nothing,Int}=nothing, 
-                     country_name::Union{Nothing,String}=nothing, 
-                     country_iso3::Union{Nothing,String}=nothing)
+    rda_sites(
+        source_name=nothing, source_id=nothing, 
+        country_name=nothing, country_iso3=nothing
+        )
 
-Return sites, optionally filtered by source and country
+Return sites, optionally filtered by source (`source_name` or `source_id`) and/or country (`country_name` or `country_iso3`)
 """
-
 function rda_sites(; source_name::Union{Nothing,String}=nothing,
                      source_id::Union{Nothing,Int}=nothing, 
                      country_name::Union{Nothing,String}=nothing, 
@@ -175,12 +173,21 @@ end
 
 
 """
-   rda_deaths(; source_name=nothing, source_id=nothing, site_name=nothing, site_id=nothing, country_name=nothing, country_iso3=nothing)
+   rda_deaths(
+        source_name=nothing, source_id=nothing, 
+        site_name=nothing, site_id=nothing, 
+        country_name=nothing, country_iso3=nothing
+        )
 
-Return deaths, optionally filtered
+Return deaths, optionally filtered by source (`source_name` or `source_id`), site (`site_name` or `site_id`), and/or country (`country_name` or `country_iso3`)
 """
+function rda_deaths(; source_name::Union{Nothing,String}=nothing, 
+    source_id::Union{Nothing,Int}=nothing, 
+    site_name::Union{Nothing,String}=nothing, 
+    site_id::Union{Nothing,Int}=nothing, 
+    country_name::Union{Nothing,String}=nothing, 
+    country_iso3::Union{Nothing,String}=nothing)
 
-function rda_deaths(; source_name=nothing, source_id=nothing, site_name=nothing, site_id=nothing, country_name=nothing, country_iso3=nothing)
     deaths = deepcopy(rda_env.deaths)
     sites = deepcopy(rda_env.sites)
     sources = deepcopy(rda_env.sources)
@@ -231,34 +238,50 @@ end
 
 
 """
-    rda_data_dict(dataset::Union{Nothing,String}=nothing)
+    rda_data_dict(dataset_name=nothing, dataset_id=nothing)
 
-# Return data dictionary for dataset
+Return data dictionary for dataset specified by either `dataset_name` or `dataset_id`. To get available datasets, use `rda_datasets()` function
 """
+function rda_data_dict(;dataset_name::Union{Nothing,String}=nothing, dataset_id::Union{Nothing,Int}=nothing)
 
-function rda_data_dict(dataset_name::Union{Nothing,String}=nothing, 
-                        dataset_id::Union{Nothing,String}=nothing)
-    if dataset_name === nothing
-        dict = deepcopy(rda_env.variables)
-        # vocs = deepcopy(rda_env.vocabularies)
+    variables          = rda_env.variables
+    dataset_variables  = rda_env.dataset_variables
+    datasets           = rda_env.datasets
+    vocabularies       = rda_env.vocabularies 
 
-        @warn "No dataset name is provided, so return all variables available. If only want dictionary for a particular dataset, specify dataset name. 
-                A list of all available datasets can be checked using rda_datasets()."
-    else
-        dataset_variables = deepcopy(rda_env.dataset_variables)
-        variables = deepcopy(rda_env.variables)
-        vocabularies = deepcopy(rda_env.vocabularies)
-        datasets = deepcopy(rda_env.datasets)
-
-        if dataset_name !== nothing 
-            dataset_id = datasets[datasets.name .== dataset_name, :dataset_id][1]
-        end
-        
-        var_ids = dataset_variables[dataset_variables.dataset_id .== dataset_id, :variable_id]
-        dict = variables[in.(variables.variable_id, Ref(var_ids)), :]
-
+    # No dataset specified → return all
+    if dataset_name === nothing && dataset_id === nothing
+        @warn "No dataset specified; returning all variables. Use `rda_datasets()` to list all available datasets."
+        return copy(variables)
     end
+
+    if dataset_name !== nothing
+        rows = findall(==(dataset_name), datasets.name)
+        if isempty(rows)
+            error("Dataset name '$dataset_name' not found. Use `rda_datasets()` to list available datasets.")
+        elseif length(rows) > 1
+            @warn "Multiple datasets match name '$dataset_name'; using the first match."
+        end
+        dataset_id = datasets.dataset_id[rows[1]]
+    end
+
+    # Safety: ensure we have a dataset_id now
+    if dataset_id === nothing
+        error("No dataset_id could be resolved. Provide `dataset_name` or `dataset_id`.")
+    end
+
+    # Lookup variable IDs linked to the dataset
+    var_ids = dataset_variables.variable_id[dataset_variables.dataset_id .== dataset_id]
+
+    if isempty(var_ids)
+        @warn "No variables linked to dataset_id=$dataset_id."
+        return variables[0, :]  # empty DataFrame with the same schema
+    end
+
+    # Filter variables to those in var_ids
+    dict = variables[in.(variables.variable_id, Ref(var_ids)), :]    
     
+    # Add value types to dictionary
     value_types = deepcopy(rda_env.value_types)[:,[:value_type, :value_type_id]]
     dict = leftjoin(dict, value_types,on=:value_type_id)
     rename!(dict, :name => :Column_Name, :description => :Description,
@@ -271,12 +294,11 @@ function rda_data_dict(dataset_name::Union{Nothing,String}=nothing,
 end
 
 """
-   function rda_data(; dataset_id::Union{Nothing,String}=nothing, dataset_name::Union{Nothing,String}=nothing)
+   rda_data(dataset_name=nothing , dataset_id=nothing)
 
-Load dataset as DataFrame
+Load dataset as DataFrame, where dataset is specified by either `dataset_name` or `dataset_id`. To get available datasets, use `rda_datasets()` function
 """
-
-function rda_data(; dataset_name::Union{Nothing,String}=nothing , dataset_id::Union{Nothing,String}=nothing)
+function rda_data(; dataset_name::Union{Nothing,String}=nothing , dataset_id::Union{Nothing,Int}=nothing)
     if dataset_name === nothing && dataset_id === nothing
         error("Please specify dataset id or dataset name to load the data. Call rda_datasets() for available datasets in RDA.")
 
@@ -293,11 +315,10 @@ function rda_data(; dataset_name::Union{Nothing,String}=nothing , dataset_id::Un
 end
 
 """
-   function rda_schema(; fields=false)
+   rda_schema(fields=false)
 
 List tables and fields (schema)
 """
-
 function rda_schema(; fields=false)
     tables = deepcopy(rda_env.db_schema)
     if fields
@@ -305,6 +326,29 @@ function rda_schema(; fields=false)
     else
         return tables[:,:name]
     end
+end
+
+"""
+    rda_table(table_name="")
+
+Return the contents of `table_name` as a DataFrame
+"""
+function rda_table(table_name::String)
+    db = deepcopy(rda_env.db_conn)
+    tables = deepcopy(rda_env.db_schema)
+
+    # Case-insensitive lookup
+    lookup = Dict(lowercase(n) => n for n in tables)
+    key = lowercase(String(table_name))
+
+    if !haskey(lookup, key)
+        @warn "Table name '$table_name' is not in schema. Check available tables using rda_schema()."
+        return DataFrame()
+    end
+
+    table = get_table(db, lookup[key])
+
+    return table
 end
 
 

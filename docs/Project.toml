@@ -1,3 +1,7 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+juRDA = "8bd302f7-2796-4b88-8584-78c7f77cab70"
 SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
+
+[compat]
+Documenter = "1"
