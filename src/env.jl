@@ -12,14 +12,9 @@ end
 
 # Global environment-like object
 Base.@kwdef mutable struct RDAEnv
-<<<<<<< Updated upstream
-    db_path::String = joinpath(@__DIR__, "..", "..","RDAIngest.jl/database") |> normpath
-    db_name::String = "RDA"
-=======
     db_path::String = joinpath(@__DIR__, "..", "..") |> normpath
     db_name::String = "RDA"              # can also take RDA.sqlite
     
->>>>>>> Stashed changes
     db_conn::Union{SQLite.DB, Nothing} = nothing
 
     db_schema::Union{DataFrame, Nothing} = nothing
