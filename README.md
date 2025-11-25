@@ -22,14 +22,14 @@ These functions return a data frame, with parameters that either allow the user 
 
 * `rda_datasets`: returns a data frame with basic metadata for the available data sets in the RDA, which includes the name, ID, description, and the corresponding
 unit of analysis
-  + *arguments*: `doi` & `repo_id` (both are logical, i.e., TRUE/FALSE) supplement the data frame with the DOI and repository ID from NADA
+  + *arguments*: `doi` & `repo_id` (both are logical, i.e., true/false) supplement the data frame with the DOI and repository ID from NADA
 
 * `rda_data_dict`: returns a data frame with the data dictionary for a given data set identified by the `dataset_id` argument (numeric) as given by the `rda_datasets()` output
 
 * `rda_data`: returns a data frame with the actual data from a particular data set identified with either the `dataset_id` argument (numeric) or the `dataset_name` argument (string)
 
-* `rda_tables`: returns a data frame containing the tables (with descriptions) that are available in the RDA.
-  + *arguments*: `fields` (logical/boolean) supplements the function output with the field names contained in each RDA table
+* `rda_schema`: returns a data frame containing the tables (with descriptions) that are available in the RDA.
+  + *arguments*: `fields` (logical, i.e.,true/false) supplements the function output with the field names contained in each RDA table
 
 * `rda_table`: returns a data frame containing selected table identified with `table_name` argument (string) 
 
