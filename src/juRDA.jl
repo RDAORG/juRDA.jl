@@ -338,7 +338,7 @@ function rda_table(table_name::String)
     tables = deepcopy(rda_env.db_schema)
 
     # Case-insensitive lookup
-    lookup = Dict(lowercase(n) => n for n in tables)
+    lookup = Dict(lowercase(n) => n for n in tables.name)
     key = lowercase(String(table_name))
 
     if !haskey(lookup, key)
