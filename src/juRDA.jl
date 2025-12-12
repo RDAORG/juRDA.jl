@@ -41,8 +41,7 @@ function rda_sources()
 end
 
 """
-    rda_datasets(; doi=false, repo_id=false, 
-    source_name=nothing, source_id=nothing)
+    rda_datasets(; doi=false, repo_id=false, source_name=nothing, source_id=nothing)
 
 Retrieve available datasets. If doi = true and/or repo_id = true, then also return doi of dataset and/or repository id on RDA Data Repository. Optionally filter by `source_name` or `source_id`
 """
@@ -127,10 +126,8 @@ function rda_countries(; source_name::Union{Nothing,String}=nothing, source_id::
 end
  
 """
-    rda_sites(
-        source_name=nothing, source_id=nothing, 
-        country_name=nothing, country_iso3=nothing
-        )
+    rda_sites(source_name=nothing, source_id=nothing, 
+        country_name=nothing, country_iso3=nothing)
 
 Return sites, optionally filtered by source (`source_name` or `source_id`) and/or country (`country_name` or `country_iso3`)
 """
@@ -173,11 +170,9 @@ end
 
 
 """
-   rda_deaths(
-        source_name=nothing, source_id=nothing, 
-        site_name=nothing, site_id=nothing, 
-        country_name=nothing, country_iso3=nothing
-        )
+    rda_deaths(source_name=nothing, source_id=nothing, 
+                site_name=nothing, site_id=nothing, 
+                country_name=nothing, country_iso3=nothing)
 
 Return deaths, optionally filtered by source (`source_name` or `source_id`), site (`site_name` or `site_id`), and/or country (`country_name` or `country_iso3`)
 """
@@ -294,7 +289,7 @@ function rda_data_dict(;dataset_name::Union{Nothing,String}=nothing, dataset_id:
 end
 
 """
-   rda_data(dataset_name=nothing , dataset_id=nothing)
+    rda_data(; dataset_name=nothing, dataset_id=nothing)
 
 Load dataset as DataFrame, where dataset is specified by either `dataset_name` or `dataset_id`. To get available datasets, use `rda_datasets()` function
 """
@@ -315,7 +310,7 @@ function rda_data(; dataset_name::Union{Nothing,String}=nothing , dataset_id::Un
 end
 
 """
-   rda_schema(fields=false)
+    rda_schema(fields=false)
 
 List tables and fields (schema)
 """
